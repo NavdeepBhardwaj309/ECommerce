@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+.vs/
+.idea/
+.env
+TestResults/
+coverage/
+node_modules/
+dist/
