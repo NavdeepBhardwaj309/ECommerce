@@ -3,7 +3,21 @@
 .vs/
 .idea/
 .env
+.env.*
+!.env.example
 TestResults/
 coverage/
 node_modules/
 dist/
+
+# Local configuration and secrets
+**/appsettings.Development.json
+**/appsettings.*.local.json
+**/secrets*.json
+**/secrets/
+*.pfx
+*.p12
+*.key
+*.pem
+*.publishsettings
+*.user

@@ -16,6 +16,20 @@ services:
       retries: 10
       start_period: 30s
 
+  sql-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    depends_on:
+      sql-server:
+        condition: service_healthy
+    environment:
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env}
+    entrypoint: ["/bin/bash", "-c"]
+    command: >-
+      /opt/mssql-tools18/bin/sqlcmd -C -S sql-server -U sa
+      -P "$$MSSQL_SA_PASSWORD" -b -i /scripts/create-databases.sql
+    volumes:
+      - ./scripts/create-databases.sql:/scripts/create-databases.sql:ro
+
   redis:
     image: redis:7.4-alpine
     ports:

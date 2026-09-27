@@ -1,4 +1,4 @@
-# Local Development
+ # Local Development
 
 ## Requirements
 
@@ -19,6 +19,8 @@ Edit `.env`, then start the infrastructure:
 docker compose up -d
 docker compose ps
 ```
+
+Compose initializes `ProductDb`, `OrderDb`, `InventoryDb`, `PaymentDb`, and `IdentityDb` on SQL Server. The initialization is safe to rerun. Each service's `appsettings.Development.json` contains its database connection string with a blank password; set the password to the same value as `MSSQL_SA_PASSWORD` in your local `.env` before connecting. Do not commit local credentials.
 
 Endpoints: SQL Server `localhost,1433`, Redis `localhost:6379`, Kafka `localhost:29092`, and Kafka UI `http://localhost:8088`.
 
