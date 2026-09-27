@@ -20,6 +20,8 @@ flowchart LR
 
 ## Phase 1 boundaries
 
-Each service has its own ASP.NET Core host and project. Service databases and domain types will remain owned by the service that uses them; no cross-service database access or shared business model is introduced. The gateway handles routing only and does not own business behavior.
+Each service owns four projects: `Api`, `Business`, `Domain`, and `Infrastructure`. The API project contains controllers and the ASP.NET Core host. Business contains application services, DTOs, and interfaces. Domain contains entities, enums, and domain exceptions. Infrastructure contains data access and repository implementations.
+
+Project references point inward: `Api` references `Business` and `Infrastructure`; `Infrastructure` references `Business` and `Domain`; `Business` references `Domain`. Domain has no project dependencies. These projects currently provide structure only; business endpoints, persistence, and domain behavior remain future work. Service databases and domain types stay owned by their service, with no cross-service database access or shared business model. The gateway handles routing only and does not own business behavior.
 
 Compose currently provides shared local development dependencies: SQL Server, Redis, Kafka, and Kafka UI. It does not yet build or run the application hosts. Kafka runs as a single local KRaft broker for development, not as a production topology.
