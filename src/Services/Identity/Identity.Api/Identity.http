@@ -1,0 +1,73 @@
+@baseUrl = http://localhost:5101
+@testEmail = identity-test@example.com
+@testPassword = Local_Test123!Password
+@adminAccessToken = replace-with-an-admin-access-token
+
+### Register a Customer account
+# @name register
+POST {{baseUrl}}/api/identity/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{testEmail}}",
+  "password": "{{testPassword}}",
+  "displayName": "Identity Test"
+}
+
+### Login
+# @name login
+POST {{baseUrl}}/api/identity/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{testEmail}}",
+  "password": "{{testPassword}}"
+}
+
+### Get the authenticated account
+GET {{baseUrl}}/api/identity/auth/me
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Rotate the refresh token
+# @name refresh
+POST {{baseUrl}}/api/identity/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{login.response.body.refreshToken}}"
+}
+
+### Revoke the rotated refresh token
+POST {{baseUrl}}/api/identity/auth/revoke
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refresh.response.body.refreshToken}}"
+}
+
+### Get the registered account by ID
+GET {{baseUrl}}/api/identity/users/{{register.response.body.id}}
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Update account details
+PUT {{baseUrl}}/api/identity/users/{{register.response.body.id}}
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "email": "{{testEmail}}",
+  "displayName": "Identity Test Updated"
+}
+
+### Assign a role (Admin only)
+POST {{baseUrl}}/api/identity/admin/users/{{register.response.body.id}}/roles
+Authorization: Bearer {{adminAccessToken}}
+Content-Type: application/json
+
+{
+  "role": "Customer"
+}
+
+### Delete the account
+DELETE {{baseUrl}}/api/identity/users/{{register.response.body.id}}
+Authorization: Bearer {{login.response.body.accessToken}}

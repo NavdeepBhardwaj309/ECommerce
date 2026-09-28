@@ -28,6 +28,36 @@ Stop the containers while retaining data with `docker compose down`. To delete l
 
 ## Build and run API hosts
 
+### Identity authentication
+
+The Identity API stores users and roles in `IdentityDb` using ASP.NET Core Identity's password hasher. Before starting it, configure a JWT signing key and an initial administrator with .NET user-secrets. Use a random signing key of at least 32 bytes and a bootstrap password meeting the policy (12+ characters, uppercase, lowercase, digit, special character, and at least four unique characters):
+
+```powershell
+dotnet user-secrets set "Jwt:SigningKey" "<random-signing-key-at-least-32-bytes>" --project src/Services/Identity/Identity.Api
+dotnet user-secrets set "Identity:BootstrapAdminEmail" "admin@example.com" --project src/Services/Identity/Identity.Api
+dotnet user-secrets set "Identity:BootstrapAdminPassword" "<strong-bootstrap-password>" --project src/Services/Identity/Identity.Api
+```
+
+If the Identity connection string is not already in the ignored local Development settings, configure `ConnectionStrings:IdentityDbSqlConnection` with user-secrets as well. Apply the schema before starting the API:
+
+```powershell
+dotnet ef database update --project src/Services/Identity/Identity.Infrastructure --startup-project src/Services/Identity/Identity.Api
+```
+
+The initial Admin is optional, but without one only `Customer` accounts can be created and the Admin-only role-assignment endpoint cannot be used. Public registration always assigns `Customer`; clients cannot select their own role.
+
+Identity endpoints:
+
+- `POST /api/identity/auth/register`
+- `POST /api/identity/auth/login`
+- `POST /api/identity/auth/refresh`
+- `POST /api/identity/auth/revoke`
+- `GET /api/identity/auth/me` (authenticated)
+- `GET /api/identity/users/{userId}` (self or Admin)
+- `POST /api/identity/admin/users/{userId}/roles` (Admin)
+
+Access tokens are short-lived JWTs. Refresh tokens are single-use, rotated on refresh, and stored in the database only as SHA-256 hashes. Login failures are generic and trigger account lockout after repeated failures. Try the request examples in `src/Services/Identity/Identity.Api/Identity.http`.
+
 Build all projects:
 
 ```powershell

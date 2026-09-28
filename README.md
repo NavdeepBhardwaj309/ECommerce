@@ -14,4 +14,4 @@ See [local development](docs/local-development.md) to start the dependencies and
 
 ## Current scope
 
-This is Phase 1 only. The health endpoints are infrastructure probes, not business APIs. Authentication, database schemas, event processing, containers for application services, and Kubernetes manifests are intentionally deferred to their implementation phases.
+Identity now provides account registration, login, JWT access tokens, rotating refresh tokens, role assignment, and authorization. The Identity database schema is managed through EF Core migrations. The other service business APIs, event processing, application containers, and Kubernetes manifests remain future work. Health endpoints are infrastructure probes, not business APIs.
